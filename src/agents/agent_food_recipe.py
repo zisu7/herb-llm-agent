@@ -1,0 +1,44 @@
+import json
+from src.agents.agent_utils import run_agent
+
+PROMPT_AGENT3_FOOD_RECIPE = """角色：药膳食疗方案设计师
+输入：辨证结果 + 筛选得到的配伍药材JSON
+要求产出2套不同形式食补方案（汤/粥/茶饮轮换）
+强制输出结构（Markdown，方便前端渲染）
+## 食疗方案一：【药膳名称】
+👉适配体质：
+📝配方（家庭食疗用量）：
+🍳详细制作步骤：
+1. 原料预处理方法
+2. 火候、炖煮时长、操作顺序
+3. 出锅简单处理
+⏰食用指导：频次、最佳服用时间、持续周期
+⚠️禁忌与注意事项
+## 食疗方案二：【药膳名称】
+👉适配体质：
+📝配方（家庭食疗用量）：
+🍳详细制作步骤：
+1.
+2.
+⏰食用指导
+⚠️禁忌与注意事项
+文末统一固定文案：
+温馨提示：食疗仅为日常养生调理手段，无法替代药物治疗，患病请及时就医。
+约束：
+1. 所有药材必须来自传入的selected_herbs列表，不能新增药材；
+2. 烹饪步骤通俗易懂，普通家庭厨具即可完成；
+3. 操作时长、火候描述清晰，拒绝模糊表述；
+4. 若含有非药食同源药材，明确标注「不宜长期连续食用」。
+5. 🔴**【重要免责】食疗温馨提示**：本方仅为日常体质调理药膳，不属于药品，无法治疗疾病。身体存在病症请及时线下就医。"""
+
+
+def food_recipe_agent(bianzheng_result: dict, herb_result: dict):
+    user_msg = f"""
+【辨证结果】
+{json.dumps(bianzheng_result, ensure_ascii=False, indent=2)}
+【候选配伍药材】
+{json.dumps(herb_result, ensure_ascii=False, indent=2)}
+请生成带完整家庭烹饪步骤的食疗药膳方案。
+"""
+    markdown_result = run_agent(PROMPT_AGENT3_FOOD_RECIPE, user_msg)
+    return markdown_result
