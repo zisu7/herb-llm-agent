@@ -24,6 +24,18 @@
 - **Agent3 食疗方案**：基于辨证与药材，生成两套食补方案（汤/粥/茶饮轮换），包含配方表、家庭烹饪详细步骤（预处理/火候/时长）、食用指导（频次/最佳时间/持续周期）、禁忌与注意事项
 
 > 重要说明：本项目仅做养生科普参考，不能替代执业医师诊断与治疗，不具备行医功能。
+## 📂 项目目录说明
+herb‑llm‑agent
+├── main.py                     # 系统主菜单入口（中药研发模块+药膳问诊模块）
+├── src/
+│   └── agents/
+│       ├── agent_constitution.py    # Agent1：多轮问诊、体质辨证、输出推理依据及免责声明
+│       ├── agent_herb_match.py      # Agent2：匹配药材，写明性味归经，生成代茶饮方案
+│       └── agent_food_recipe.py     # Agent3：生成食疗药膳做法、食用周期与禁忌提醒
+├── docs/
+│   └── prompt_templates.md          # 三份Agent提示词备份文档
+└── examples/
+└── test_case.md                 # 问诊测试样例，方便快速体验项目
  ## 技术栈
  - Python 3.10+
  - DeepSeek API
