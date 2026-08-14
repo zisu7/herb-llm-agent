@@ -220,12 +220,13 @@ def main():
         print("5.数据统计功能")
         print("----------【模块二：药膳智能养生辅助模块｜落地应用方向，药食同源】----------")
         print("6.查看全部药食同源药材清单")
-        print("7.输入体质生成药膳、药茶推荐方案，附带配伍禁忌提醒")
+        print("7.输入体质（直接提供体质，输出药膳、药茶推荐方案）")
+        print("8.问诊系统（多轮采集身体症状，推导体质后生成药膳药茶，附带配伍禁忌提醒）")
         print("0.退出系统")
         try:
-            choice = int(input("请输入选择(0-7): "))
+            choice = int(input("请输入选择(0-8): "))
         except ValueError:
-            print("\n输入错误，请输入数字0-7")
+            print("\n输入错误，请输入数字0-8")
             input("按回车继续...")
             continue
         if choice == 0:
@@ -337,10 +338,86 @@ def main():
                     print("\n序号无效")
             except ValueError:
                 print("\n输入错误，请输入数字1-8")
+        elif choice == 8:
+            print("\n【药膳智能问诊流水线】")
+            print("=" * 60)
+            print("系统将通过多轮对话收集您的身体症状，")
+            print("依次由三个AI智能体完成：")
+            print("  Agent1 → 体质辨证（输出推理依据+免责声明）")
+            print("  Agent2 → 药材匹配（性味归经+代茶饮方案）")
+            print("  Agent3 → 食疗药膳（详细做法）")
+            print("=" * 60)
+            try:
+                from src.food_pipeline import food_pipeline_handler, export_consultation_txt
+                dialog_history = []
+                round_num = 1
+                print(f"\n--- 第{round_num}轮问诊 ---")
+                try:
+                    symptom = input("请描述您的主要身体症状和不适感受: ").strip()
+                except EOFError:
+                    symptom = ""
+                if not symptom:
+                    print("\n未输入症状信息，返回主菜单")
+                else:
+                    dialog_history.append(f"第{round_num}轮: {symptom}")
+                    try:
+                        taboo = input("请输入您的忌口/过敏信息（可选，直接回车跳过）: ").strip()
+                    except EOFError:
+                        taboo = ""
+                    print("\n请问您是否属于孕妇、哺乳期、儿童，或是存在严重基础病这类特殊人群？")
+                    print("如果属于，请直接说明你的情况（例如：我是孕妇 / 哺乳期）；若无，则直接回复：无")
+                    while True:
+                        try:
+                            special_population = input("请输入：").strip()
+                        except EOFError:
+                            special_population = "无"
+                        if special_population:
+                            break
+                        print("输入不能为空，若无特殊人群情况请直接回复：无")
+                    user_dialog_text = "\n".join(dialog_history)
+                    while True:
+                        result = food_pipeline_handler(user_dialog_text, taboo, special_population)
+                        if result.get("type") == "ask":
+                            question = result.get("question", "")
+                            print(f"\n🤖 系统追问: {question}")
+                            try:
+                                answer = input("请回答: ").strip()
+                            except EOFError:
+                                answer = ""
+                            if not answer:
+                                answer = "无补充"
+                            round_num += 1
+                            dialog_history.append(f"第{round_num}轮: {answer}")
+                            user_dialog_text = "\n".join(dialog_history)
+                            continue
+                        elif result.get("type") == "result":
+                            print("\n=====【Agent3 食疗药膳方案】=====")
+                            print(result.get("food_scheme_markdown", ""))
+                            print("=====================================\n")
+                            try:
+                                export_choice = input("请问您是否需要将本次问诊结果导出为本地txt文件保存？【是/否】: ").strip()
+                            except EOFError:
+                                export_choice = "否"
+                            if export_choice in ("是", "y", "Y", "yes", "YES"):
+                                saved_path = export_consultation_txt(user_dialog_text, result)
+                                print(f"✅ 问诊记录已保存至：{saved_path}")
+                            else:
+                                print("好的，本次问诊不导出文件。")
+                            print("\n✅ 问诊流水线已完成，即将返回主菜单")
+                            break
+                        else:
+                            print(f"\n⚠️ 流水线异常: {result}")
+                            break
+            except Exception as e:
+                print(f"\n⚠️ 药膳问诊流水线运行失败: {e}")
+                print("请检查 DEEPSEEK_API_KEY 配置是否正确")
         else:
-            print("\n输入错误，请输入数字0-7")
+            print("\n输入错误，请输入数字0-8")
         if choice != 0:
-            input("\n按回车继续...")
+            try:
+                input("\n按回车继续...")
+            except EOFError:
+                pass
 
 if __name__ == "__main__":
     main()
