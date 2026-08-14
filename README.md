@@ -146,14 +146,14 @@ python tests/test_interactive_food.py
 
 ## 📁 项目目录说明
 herb‑llm‑agent
-├─ main.py               # 主程序统一入口，包含研发Agent、药膳全部功能
-├─ agents/               # 各个智能体提示词与逻辑
-├─ data/                 # 药材知识库数据
-├─ utils/                # 工具函数
-├─ .env                  # 密钥配置（自行新建，不上传git）
-├─ .gitignore            # git忽略配置
-├─ CHANGELOG.md          # 更新日志，记录版本功能迭代
-└─ README.md             # 项目说明文档
+├─ main.py        # 主程序统一入口，包含研发Agent、药膳全部功能
+├─ agents/        # 各个智能体提示词与逻辑
+├─ static/        # 药材知识库json数据
+├─ utils/         # 工具函数
+├─ .env           # 密钥配置（自行新建，不上传git）
+├─ .gitignore     # git忽略配置
+├─ CHANGELOG.md   # 更新日志，记录版本功能迭代
+└─ README.md      # 项目说明文档
 
 ## 💬 反馈与交流
 欢迎部署体验本项目。如果在部署、安装、使用过程中遇到问题，可以联系我，我会尽力提供帮助。
