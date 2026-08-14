@@ -156,15 +156,16 @@ def safety_check_herbs(res_herb: dict) -> dict:
 
 def export_consultation_txt(user_dialog_text: str, result: dict, save_dir=None) -> str:
     """
-    将本次问诊结果导出为本地txt文件，保存到项目根目录。
-    仅在用户明确选择“是”时由调用方触发，禁止自动导出。
-    返回：保存文件绝对路径；失败返回以“导出失败：”开头的说明字符串。
+    将本次问诊结果导出为本地txt文件，保存到项目内 records/ 文件夹。
+    仅在用户明确选择"是"时由调用方触发，禁止自动导出。
+    返回：保存文件绝对路径；失败返回以"导出失败："开头的说明字符串。
     """
     try:
         if save_dir is None:
-            # food_pipeline.py 位于 herb-llm-agent/src/，项目根目录 = 上三级目录
-            save_dir = Path(__file__).resolve().parent.parent.parent
+            # food_pipeline.py 位于 herb-llm-agent/src/，项目根目录 = 上两级目录
+            save_dir = Path(__file__).resolve().parent.parent / "records"
         save_dir = Path(save_dir)
+        save_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filepath = save_dir / f"问诊记录_{timestamp}.txt"
 
